@@ -29,7 +29,7 @@ const char *argp_bug_address= "<andrew@linuxjedi.co.uk>";
 static struct argp_option options[]=
 {
   {"verbose", 'v', 0, 0, "Verbose output", 0},
-  {"connection", 'c', "CONNECTIONS", 0, "Connections per thread", 0},
+  {"connections", 'c', "CONNECTIONS", 0, "Connections per thread", 0},
   {"host", 'h', "HOST", 0, "Host name or socket path", 0},
   {"port", 'o', "PORT", 0, "Port number (0 for socket)", 0},
   {"user", 'u', "USER", 0, "Username", 0},
