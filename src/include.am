@@ -1,0 +1,5 @@
+# vim:ft=automake
+
+bin_PROGRAMS+= attachbench
+
+attachbench_SOURCES= src/main.c
