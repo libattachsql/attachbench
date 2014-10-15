@@ -78,7 +78,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
       arguments->host= arg;
       break;
     case 'o':
-      arguments->connections= strtoul(arg, NULL, 10);
+      arguments->port= strtoul(arg, NULL, 10);
       break;
     case 'u':
       arguments->user= arg;
@@ -119,6 +119,9 @@ int main(int argc, char *argv[])
   attachsql_error_t *error= NULL;
   uint16_t con_counter;
 
+  clock_t start, diff;
+  float sec;
+
   arguments.verbose= false;
   arguments.connections= 16;
   arguments.host= (char*)default_host;
@@ -139,6 +142,8 @@ int main(int argc, char *argv[])
   group= attachsql_group_create(NULL);
   srand(time(NULL));
 
+  printf("Running %ld queries on %d connections\n", arguments.max_queries, arguments.connections);
+
   for (con_counter= 0; con_counter < arguments.connections; con_counter++)
   {
     /* Create connections and add them to the group */
@@ -154,12 +159,15 @@ int main(int argc, char *argv[])
       return -1;
     }
   }
-
+  start= clock();
   while (query_done_counter < (arguments.max_queries + arguments.connections))
   {
     attachsql_group_run(group);
   }
+  diff= clock() - start;
   attachsql_group_destroy(group);
+  sec= (float)diff / (float)CLOCKS_PER_SEC;
+  printf("%ld queries in %.3f seconds, %.3f queries per second", arguments.max_queries, sec, ((float)arguments.max_queries)/sec);
   return 0;
 }
 
