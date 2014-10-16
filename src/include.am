@@ -4,3 +4,4 @@ bin_PROGRAMS+= attachbench
 
 attachbench_SOURCES= src/main.c
 attachbench_LDADD= @LIBATTACHSQL_LIB@
+attachbench_LDADD+= -lpthread
