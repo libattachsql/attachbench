@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <pthread.h>
 #include <libattachsql-1.0/attachsql.h>
@@ -179,8 +180,8 @@ int main(int argc, char *argv[])
   uint16_t thread_counter;
   struct connect_thread *threads;
 
-  clock_t start, diff;
-  float sec;
+  struct timeval start, stop;
+  double start_seconds, stop_seconds, seconds;
 
   arguments.verbose= false;
   arguments.connections= 4;
@@ -198,7 +199,7 @@ int main(int argc, char *argv[])
   threads= malloc(sizeof(struct connect_thread) * arguments.threads);
   printf("Running %ld queries on %d threads with %d connections per thread\n", arguments.max_queries, arguments.threads, arguments.connections);
 
-  start= clock();
+  gettimeofday(&start, NULL);
 
   for (thread_counter= 0; thread_counter < arguments.threads; thread_counter++)
   {
@@ -213,9 +214,12 @@ int main(int argc, char *argv[])
     pthread_join(threads[thread_counter].thread_id, NULL);
   }
 
-  diff= clock() - start;
-  sec= (float)diff / (float)CLOCKS_PER_SEC;
-  printf("%ld queries in %.3f seconds, %.3f queries per second\n", arguments.max_queries, sec, ((float)arguments.max_queries)/sec);
+  gettimeofday(&stop, NULL);
+  start_seconds= (double)start.tv_sec + ((double)start.tv_usec / 1000000);
+  stop_seconds= (double)stop.tv_sec + ((double)stop.tv_usec / 1000000);
+  seconds= stop_seconds - start_seconds;
+
+  printf("%ld queries in %.3f seconds, %.3f queries per second\n", arguments.max_queries, seconds, ((float)arguments.max_queries)/seconds);
   return 0;
 }
 
